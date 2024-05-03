@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cicdpipeline-server-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cicdpipeline-server
+  template:
+    metadata:
+      labels:
+        app: cicdpipeline-server
+    spec:
+      containers:
+        - image: ericincloud/cicdpipeline-server:latest
+          name: cicdpipeline-server
+          ports:
+            - containerPort: 8080
+          command: ["gunicorn"]
+          args: ["-w", "4", "-b", ":8080", "app:app"] 
+
+# Gunicorn does not allow ports under 1024. Use port 8080 in deployment file "containerPort: 8080"
+# LoadBalancer in service file will route external Port 80 traffic to internal Port 8080 instead. 
+
+          
