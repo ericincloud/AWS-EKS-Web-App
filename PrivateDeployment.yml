@@ -1,0 +1,28 @@
+#Private AWS ECR Web App Image
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cicdpipeline-server-deployment
+spec:
+  selector:
+    matchLabels:
+      app: cicdpipeline-server
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: cicdpipeline-server
+    spec:
+      serviceAccountName: my-serviceaccount
+      containers:
+      - name: cicdpipeline-server
+        image: 031141527841.dkr.ecr.us-east-1.amazonaws.com/container-web-app:latest
+        ports:
+          - containerPort: 8080
+        command: ["gunicorn"]
+        args: ["-w", "4", "-b", ":8080", "app:app"]
+
+  
+# service.yaml... Gunicorn does not allow port under 1024.. using port 8080 in deployment file "containerPort: 8080"... 
+# LoadBalancer in service file will route external Port 80 traffic to internal Port 8080 instead. 
