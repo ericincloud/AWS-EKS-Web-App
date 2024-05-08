@@ -1,3 +1,0 @@
-# Paste this command into the terminal/CloudShell
-
-kubectl expose deployment cicdpipeline-server-deployment --type=LoadBalancer --name=my-service
