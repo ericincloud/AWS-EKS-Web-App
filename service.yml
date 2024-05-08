@@ -1,4 +1,4 @@
-#For Web App
+#For Web App not NGINX web server
 
 apiVersion: v1
 kind: Service
