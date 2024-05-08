@@ -1,0 +1,14 @@
+#For Web App
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: cal-web-app
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+  selector:
+    app: cicdpipeline-server
+  type: LoadBalancer
