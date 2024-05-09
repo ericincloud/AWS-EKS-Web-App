@@ -42,10 +42,30 @@ sudo mv /tmp/eksctl /usr/local/bin
 
 
 ## Step 2: Create Cluster
-#### 
+#### Create an EKS Cluster, use command:
+
+```
+eksctl create cluster --name my-eks-cluster --region us-east-1 --nodegroup-name my-nodegroup --node-type t2.small --nodes 3 --nodes-min 1 --nodes-max 5 --managed
+```
+#### Replace `my-eks-cluster` and `us-east-1` with your cluster name and AWS region.
 
 ## Step 3: Create and Deploy ServiceAccount.yml file (Optional)
-#### 
+#### Create and deploy Service Account only if using private ECR deployment. Create the IAM role first then reference it.
+
+#### `nano ServiceAccount` > Copy and Paste configuration > Save. 
+
+```
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: my-serviceaccount
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::031141527841:role/EKSPullFromEC
+```
+
+#### Replace role ARN with your IAM role ARN.
+
+#### Deploy file using command: `kubectl apply -f ServiceAccount.yml`
 
 ## Step 4: Create and Deploy Deployment.yml file
 #### 
