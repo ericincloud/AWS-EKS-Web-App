@@ -7,19 +7,28 @@
 
 ### NOTE: 
 
-## Step 1: 
+## Step 1: Install kubectl and eksctl (Optional)
 #### 
 
-## Step 2: 
+## Step 2: Create Cluster
 #### 
 
-## Step 3: 
+## Step 3: Create and Deploy ServiceAccount.yml file (Optional)
 #### 
 
-## Step 4: 
+## Step 4: Create and Deploy Deployment.yml file
 #### 
 
-## Step 5: 
+## Step 5: Create and Deploy Service.yml file
+#### 
+
+## Step 6: Verify Functionality
+#### 
+
+## Step 7: Deleting Cluster
+#### 
+
+## Step 8: 
 #### 
 
 ## Notes
