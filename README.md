@@ -50,7 +50,7 @@ eksctl create cluster --name my-eks-cluster --region us-east-1 --nodegroup-name 
 #### Replace `my-eks-cluster` and `us-east-1` with your cluster name and AWS region.
 
 ## Step 3: Create and Deploy ServiceAccount.yml file (Optional)
-#### Create and deploy Service Account only if using PRIVATE ECR deployment. Create the IAM role first then reference it.
+#### Create and deploy Service Account only if using PRIVATE ECR deployment. Create the IAM role for EKS Cluster attached with policy `AmazonEC2ContainerRegistryReadOnly` then reference it. 
 
 #### `nano ServiceAccount` > Copy and Paste configuration > Save. 
 
@@ -200,14 +200,51 @@ spec:
 `eksctl delete cluster --name my-eks-cluster`
 
 ## Notes
-* 
-* 
-* 
+* Use appropriate compute type for application/server.
+* Use IAM role for private image repositories. 
+* Ensure required app dependencies.
+* Enter `sudo sh eksctl.sh` for related error.
 
 ## Reference 
-* 
 
-* 
+* Deploy file <br>
+```
+kubectl apply -f <file>
+```
 
-* 
+* Create Cluster <br>
+```
+eksctl create cluster --name my-eks-cluster --region us-east-1 --nodegroup-name my-nodegroup --node-type t2.small --nodes 3 --nodes-min 1 --nodes-max 5 --managed
+```
+
+* Delete service and cluster <br>
+```
+kubectl delete svc my-service
+
+eksctl delete cluster --name my-eks-cluster
+```
+
+*Troubleshooting
+
+* Lists all pods in the current namespace. <br>
+`kubectl get pods`
+
+* hows detailed information about a specific pod. <br>
+`kubectl describe pod <pod-name>`
+
+* Prints the logs for a specific pod. <br>
+`kubectl logs <pod-name>`
+
+* Lists all services in the current namespace. <br>
+`kubectl get svc`
+
+* Lists all nodes in the cluster. <br>
+`kubectl get nodes`
+
+* Shows detailed information about a specific node. <br>
+`kubectl describe node <node-name> `
+
+* Lists all EKS clusters. <br>
+`eksctl get cluster`
+
 
