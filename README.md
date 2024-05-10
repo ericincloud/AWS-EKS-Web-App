@@ -158,7 +158,25 @@ spec:
 #### 
 
 ## Step 5: Create and Deploy Service.yml file
-#### 
+#### Create and Deploy Service.yml file if using Web App or use command below if deploying NGINX Web Server.
+
+```
+#For Web App 
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: cal-web-app
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+  selector:
+    app: cicdpipeline-server
+  type: LoadBalancer
+```
+
 
 ## Step 6: Verify Functionality
 #### 
