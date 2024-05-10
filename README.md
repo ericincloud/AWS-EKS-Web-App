@@ -157,8 +157,12 @@ spec:
 
 #### 
 
-## Step 5: Create and Deploy Service.yml file
-#### Create and Deploy Service.yml file if using Web App or use command below if deploying NGINX Web Server.
+## Step 5: Create and Deploy `Service.yml` file
+#### Create and Deploy Service.yml file if using Web App. If deploying NGINX Web Server, use command below.
+
+#### Create file e.g. `nano Service.yml` then deploy it using e.g. `kubectl apply -f Service.yml`
+
+### Web App Service
 
 ```
 #For Web App 
@@ -177,15 +181,23 @@ spec:
   type: LoadBalancer
 ```
 
+### NGINX Web Server Service
+
+`kubectl expose deployment nginx-deployment --type=LoadBalancer --name=my-service`
 
 ## Step 6: Verify Functionality
-#### 
+#### Access the Web App or Web Server via the load balancer IP address. You should now be able to access the Calculator Flask Web App or the NGINX Web Server!
+
+#### Get external IP address of Load Balancer: e.g. `kubectl get services my-service`
 
 ## Step 7: Deleting Cluster
-#### 
+#### Delete service and cluster.
 
-## Step 8: 
-#### 
+#### Delete Service: <br> 
+`kubectl delete svc my-service`
+
+#### Delete Cluster: <br>
+`eksctl delete cluster --name my-eks-cluster`
 
 ## Notes
 * 
