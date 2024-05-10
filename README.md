@@ -10,7 +10,7 @@
 ## Step 1: Install kubectl and eksctl (Optional)
 #### Install `kubectl` and `eksctl` to enable communication and ability to manage EKS clusters. In addition, ensure AWS CLI is already installed or configured.
 
-#### Install [kubectl]
+### Install [kubectl]
 
 ```
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -18,7 +18,7 @@ curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stabl
 sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 ```
 
-#### Install the [eksctl] command-line tool.
+### Install the [eksctl] command-line tool.
 
 
 ```bash
@@ -50,7 +50,7 @@ eksctl create cluster --name my-eks-cluster --region us-east-1 --nodegroup-name 
 #### Replace `my-eks-cluster` and `us-east-1` with your cluster name and AWS region.
 
 ## Step 3: Create and Deploy ServiceAccount.yml file (Optional)
-#### Create and deploy Service Account only if using private ECR deployment. Create the IAM role first then reference it.
+#### Create and deploy Service Account only if using PRIVATE ECR deployment. Create the IAM role first then reference it.
 
 #### `nano ServiceAccount` > Copy and Paste configuration > Save. 
 
@@ -68,6 +68,93 @@ metadata:
 #### Deploy file using command: `kubectl apply -f ServiceAccount.yml`
 
 ## Step 4: Create and Deploy Deployment.yml file
+#### Create and Deploy deployment configurtion. Use `deployment.yml` to deploy a Web App from a public Docker image repository OR use `NginxDeployment.yml` to deploy a NGINX Web Server OR use `PrivateDeployment.yml` to deploy a Web App from a Private ECR repository. 
+
+#### Create file e.g. `nano deployment.yml` then deploy it using e.g. `kubectl apply -f ServiceAccount.yml`
+
+### Deployment.yml
+
+```
+#Public Web App Docker Image
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cicdpipeline-server-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cicdpipeline-server
+  template:
+    metadata:
+      labels:
+        app: cicdpipeline-server
+    spec:
+      containers:
+        - image: ericincloud/cicdpipeline-server:latest
+          name: cicdpipeline-server
+          ports:
+            - containerPort: 8080
+          command: ["gunicorn"]
+          args: ["-w", "4", "-b", ":8080", "app:app"]        
+```
+
+### NginxDeployment.yml
+
+```
+#NGINX Web Server Image
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+```
+
+### PrivateDeployment.yml
+
+```
+#Private AWS ECR Web App Image
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cicdpipeline-server-deployment
+spec:
+  selector:
+    matchLabels:
+      app: cicdpipeline-server
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: cicdpipeline-server
+    spec:
+      serviceAccountName: my-serviceaccount
+      containers:
+      - name: cicdpipeline-server
+        image: 031141527841.dkr.ecr.us-east-1.amazonaws.com/container-web-app:latest
+        ports:
+          - containerPort: 8080
+        command: ["gunicorn"]
+        args: ["-w", "4", "-b", ":8080", "app:app"]
+```
+
 #### 
 
 ## Step 5: Create and Deploy Service.yml file
