@@ -7,7 +7,7 @@
 
 ### NOTE: 
 
-## Step 1: Install kubectl and eksctl (Optional)
+## Step 1: Install kubectl and eksctl 
 #### Install `kubectl` and `eksctl` to enable communication and ability to manage EKS clusters. In addition, ensure AWS CLI is already installed or configured.
 
 ### Install [kubectl]
@@ -47,35 +47,29 @@ sudo mv /tmp/eksctl /usr/local/bin
 ```
 eksctl create cluster --name my-eks-cluster --region us-east-1 --nodegroup-name my-nodegroup --node-type t2.small --nodes 3 --nodes-min 1 --nodes-max 5 --managed
 ```
-#### Replace `my-eks-cluster` and `us-east-1` with your cluster name and AWS region.
+#### Replace `my-eks-cluster` and `us-east-1` with your cluster name and AWS region. Resoures will be deployed via CloudFormation. 
 
-## Step 3: Create and Deploy ServiceAccount.yml file (Optional)
-#### Create and deploy Service Account only if using PRIVATE ECR deployment. Create the IAM role for EKS Cluster attached with policy `AmazonEC2ContainerRegistryReadOnly` then reference it. 
+![image](https://github.com/ericincloud/AWS-EKS-Web-App/assets/144301872/3bf4469d-a208-4b8e-aaec-f0562061a7d6)
+![image](https://github.com/ericincloud/AWS-EKS-Web-App/assets/144301872/e3c8401f-f035-412e-ac30-c862d6909f64)
 
-#### `nano ServiceAccount` > Copy and Paste configuration > Save. 
+
+## Step 3: Create Kubernestes secret (Optional: For private DockerHub image only)
+#### Create Kubernetes secret to allow access to Private DocekrHub repository. Enter username and password.
+
+#### 
 
 ```
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: my-serviceaccount
-  annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::031141527841:role/EKSPullFromEC
+kubectl create secret docker-registry regcred --docker-username=<username> --docker-password=<password>
 ```
-
-#### Replace role ARN with your IAM role ARN.
-
-#### Deploy file using command: `kubectl apply -f ServiceAccount.yml`
 
 ## Step 4: Create and Deploy Deployment.yml file
-#### Create and Deploy deployment configurtion. Use `deployment.yml` to deploy a Web App from a public Docker image repository OR use `NginxDeployment.yml` to deploy a NGINX Web Server OR use `PrivateDeployment.yml` to deploy a Web App from a Private ECR repository. 
+#### Create and Deploy deployment configurtion. Use `deployment.yml` to deploy a Web App from a private Docker image repository OR use `NginxDeployment.yml` to deploy a NGINX Web Server.
+#### Create file e.g. `nano deployment.yml` then deploy it using e.g. `kubectl apply -f deployment.yml`
 
-#### Create file e.g. `nano deployment.yml` then deploy it using e.g. `kubectl apply -f ServiceAccount.yml`
-
-### Deployment.yml
+### deployment.yml
 
 ```
-#Public Web App Docker Image
+#Private DockerHub Web App Image
 
 apiVersion: apps/v1
 kind: Deployment
@@ -92,12 +86,14 @@ spec:
         app: cicdpipeline-server
     spec:
       containers:
-        - image: ericincloud/cicdpipeline-server:latest
-          name: cicdpipeline-server
-          ports:
-            - containerPort: 8080
-          command: ["gunicorn"]
-          args: ["-w", "4", "-b", ":8080", "app:app"]        
+      - image: ericincloud/cicdpipeline-server:latest
+        name: cicdpipeline-server
+        ports:
+        - containerPort: 8080
+        command: ["gunicorn"]
+        args: ["-w", "4", "-b", ":8080", "app:app"]
+      imagePullSecrets:
+      - name: regcred
 ```
 
 ### NginxDeployment.yml
@@ -126,41 +122,12 @@ spec:
         - containerPort: 80
 ```
 
-### PrivateDeployment.yml
-
-```
-#Private AWS ECR Web App Image
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: cicdpipeline-server-deployment
-spec:
-  selector:
-    matchLabels:
-      app: cicdpipeline-server
-  replicas: 3
-  template:
-    metadata:
-      labels:
-        app: cicdpipeline-server
-    spec:
-      serviceAccountName: my-serviceaccount
-      containers:
-      - name: cicdpipeline-server
-        image: 031141527841.dkr.ecr.us-east-1.amazonaws.com/container-web-app:latest
-        ports:
-          - containerPort: 8080
-        command: ["gunicorn"]
-        args: ["-w", "4", "-b", ":8080", "app:app"]
-```
-
 #### 
 
-## Step 5: Create and Deploy `Service.yml` file
-#### Create and Deploy Service.yml file if using Web App. If deploying NGINX Web Server, use command below.
+## Step 5: Expose App/Server using Kubernetes service
+#### Create and Deploy Service.yml file if using Web App. If deploying NGINX Web Server, use command below. This creates a load balacner that grants access to the app or server. 
 
-#### Create file e.g. `nano Service.yml` then deploy it using e.g. `kubectl apply -f Service.yml`
+#### Create file e.g. `nano service.yml` then deploy it using e.g. `kubectl apply -f service.yml`
 
 ### Web App Service
 
@@ -186,9 +153,18 @@ spec:
 `kubectl expose deployment nginx-deployment --type=LoadBalancer --name=my-service`
 
 ## Step 6: Verify Functionality
-#### Access the Web App or Web Server via the load balancer IP address. You should now be able to access the Calculator Flask Web App or the NGINX Web Server!
+#### Access the Web App or Web Server via the load balancer IP address. Get external IP address of Load Balancer using: <br>
 
-#### Get external IP address of Load Balancer: e.g. `kubectl get services my-service`
+```
+kubectl get services my-service
+```
+
+![image](https://github.com/ericincloud/AWS-EKS-Web-App/assets/144301872/0e9e59b9-609d-492c-824b-8b9fd2b9a24d)
+![image](https://github.com/ericincloud/AWS-EKS-Web-App/assets/144301872/4f9fbaca-c3d1-45b5-b979-474183f68219)
+
+
+
+#### You should now be able to access the Calculator Flask Web App or the NGINX Web Server!
 
 ## Step 7: Deleting Cluster
 #### Delete service and cluster.
@@ -200,6 +176,7 @@ spec:
 `eksctl delete cluster --name my-eks-cluster`
 
 ## Notes
+* Ensure architecture (arm64,amd64) match between the app/server/service and instance to prevent any exec errors.
 * Use appropriate compute type for application/server.
 * Use IAM role for private image repositories. 
 * Ensure required app dependencies.
@@ -225,6 +202,9 @@ eksctl delete cluster --name my-eks-cluster
 ```
 
 *Troubleshooting
+
+* Get events
+`kubectl get events` 
 
 * Lists all pods in the current namespace. <br>
 `kubectl get pods`
