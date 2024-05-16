@@ -1,5 +1,5 @@
 # AWS EKS - Kubernetes Web App/Server
-#### AWS EKS - Kubernetes Web App/Server allows for the deployment choice either of a calculator web application or NGINX web server. The calculator web app built using flask is deployed using a private Docker image. On the other hand, the NGINX web server uses a public NGINX iamge. Both deployments are hosted on a AWS Kubernetes cluster that users access through a load balancer. AWS EKS - Kubernetes Web App/Server simplifies container management whiling allowing users to access containerized apps, servers, and services while maintaining high availability. 
+#### AWS EKS - Kubernetes Web App/Server allows for the deployment of either a calculator web application or NGINX web server. The calculator web app built using flask is deployed using a private Docker image. On the other hand, the NGINX web server uses a public NGINX iamge. Both deployments are hosted on a AWS Kubernetes cluster that users access through a load balancer. AWS EKS - Kubernetes Web App/Server simplifies container management while allowing users to access containerized apps, servers, and services while maintaining high availability. 
 
 ## Step 1: Install kubectl and eksctl 
 #### Install `kubectl` and `eksctl` to enable communication and ability to manage EKS clusters. In addition, ensure AWS CLI is already installed or configured.
@@ -48,7 +48,7 @@ eksctl create cluster --name my-eks-cluster --region us-east-1 --nodegroup-name 
 
 
 ## Step 3: Create Kubernestes secret (Optional: For private DockerHub image only)
-#### Create Kubernetes secret to allow access to Private DocekrHub repository. Enter username and password.
+#### Create Kubernetes secret to allow access to Private DockerHub repository. Enter username and password.
 
 #### 
 
@@ -56,8 +56,8 @@ eksctl create cluster --name my-eks-cluster --region us-east-1 --nodegroup-name 
 kubectl create secret docker-registry regcred --docker-username=<username> --docker-password=<password>
 ```
 
-## Step 4: Create and Deploy Deployment.yml file
-#### Create and Deploy deployment configurtion. Use `deployment.yml` to deploy a Web App from a private Docker image repository OR use `NginxDeployment.yml` to deploy a NGINX Web Server.
+## Step 4: Create and Deploy deployment.yml file
+#### Create and deploy configuration. Use `deployment.yml` to deploy a Web App from a private Docker image repository OR use `NginxDeployment.yml` to deploy a NGINX Web Server.
 #### Create file e.g. `nano deployment.yml` then deploy it using e.g. `kubectl apply -f deployment.yml`
 
 ### deployment.yml
@@ -119,7 +119,7 @@ spec:
 #### 
 
 ## Step 5: Expose App/Server using Kubernetes service
-#### Create and Deploy Service.yml file if using Web App. If deploying NGINX Web Server, use command below. This creates a load balacner that grants access to the app or server. 
+#### Create and Deploy service.yml file if using Web App. If deploying NGINX Web Server, use command below. This creates a load balancer that grants access to the app or server. 
 
 #### Create file e.g. `nano service.yml` then deploy it using e.g. `kubectl apply -f service.yml`
 
@@ -149,22 +149,23 @@ spec:
 ## Step 6: Verify Functionality
 #### Access the Web App or Web Server via the load balancer IP address. Get external IP address of Load Balancer using: <br>
 
-```
-kubectl get services my-service
-```
+
+`kubectl get services cal-web-app`
+#### or
+`kubectl get services my-service`
 
 ![image](https://github.com/ericincloud/AWS-EKS-Web-App/assets/144301872/0e9e59b9-609d-492c-824b-8b9fd2b9a24d)
 ![image](https://github.com/ericincloud/AWS-EKS-Web-App/assets/144301872/4f9fbaca-c3d1-45b5-b979-474183f68219)
 
 
 
-#### You should now be able to access the Calculator Flask Web App or the NGINX Web Server!
+#### You should now be able to access the flask Calculator Web App or the NGINX Web Server!
 
 ## Step 7: Deleting Cluster
 #### Delete service and cluster.
 
 #### Delete Service: <br> 
-`kubectl delete svc my-service`
+`kubectl delete svc cal-web-app` or `kubectl delete svc my-service` 
 
 #### Delete Cluster: <br>
 `eksctl delete cluster --name my-eks-cluster`
@@ -172,9 +173,8 @@ kubectl get services my-service
 ## Notes
 * Ensure architecture (arm64,amd64) match between the app/server/service and instance to prevent any exec errors.
 * Use appropriate compute type for application/server.
-* Use IAM role for private image repositories. 
-* Ensure required app dependencies.
-* Enter `sudo sh eksctl.sh` for related error.
+* Ensure necessary app dependencies.
+* Enter `sudo sh eksctl.sh` for related eksctl usage errors.
 
 ## Reference 
 
@@ -194,23 +194,22 @@ kubectl delete svc my-service
 
 eksctl delete cluster --name my-eks-cluster
 ```
+#### Troubleshooting
 
-*Troubleshooting
-
-* Get events
+* Get events <br>
 `kubectl get events` 
 
 * Lists all pods in the current namespace. <br>
 `kubectl get pods`
 
-* hows detailed information about a specific pod. <br>
+* Detailed information about a specific pod. <br>
 `kubectl describe pod <pod-name>`
 
 * Prints the logs for a specific pod. <br>
 `kubectl logs <pod-name>`
 
 * Lists all services in the current namespace. <br>
-`kubectl get svc`
+`kubectl get services`
 
 * Lists all nodes in the cluster. <br>
 `kubectl get nodes`
