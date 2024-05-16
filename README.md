@@ -1,11 +1,5 @@
 # AWS EKS - Kubernetes Web App/Server
-#### Desc.....
-#### Desc......
-
-## Architectural Diagram
-
-
-### NOTE: 
+#### AWS EKS - Kubernetes Web App/Server allows for the deployment choice either of a calculator web application or NGINX web server. The calculator web app built using flask is deployed using a private Docker image. On the other hand, the NGINX web server uses a public NGINX iamge. Both deployments are hosted on a AWS Kubernetes cluster that users access through a load balancer. AWS EKS - Kubernetes Web App/Server simplifies container management whiling allowing users to access containerized apps, servers, and services while maintaining high availability. 
 
 ## Step 1: Install kubectl and eksctl 
 #### Install `kubectl` and `eksctl` to enable communication and ability to manage EKS clusters. In addition, ensure AWS CLI is already installed or configured.
