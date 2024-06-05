@@ -47,7 +47,7 @@ eksctl create cluster --name my-eks-cluster --region us-east-1 --nodegroup-name 
 ![image](https://github.com/ericincloud/AWS-EKS-Web-App/assets/144301872/e3c8401f-f035-412e-ac30-c862d6909f64)
 
 
-## Step 3: Create Kubernestes secret (Optional: For private DockerHub image only)
+## Step 3: Create Kubernetes secret (Optional: For private DockerHub image only)
 #### Create Kubernetes secret to allow access to Private DockerHub repository. Enter username and password.
 
 #### 
