@@ -1,5 +1,5 @@
 # AWS EKS - Kubernetes Web App/Server
-#### AWS EKS - Kubernetes Web App/Server allows for the deployment of a calculator web application or NGINX web server. The calculator web app built using flask is deployed using a private Docker image. On the other hand, the NGINX web server uses a public NGINX iamge. Both deployments are hosted on a AWS Kubernetes cluster that users access through a load balancer. AWS EKS - Kubernetes Web App/Server simplifies container management while allowing users to access containerized apps, servers, and services while maintaining high availability. 
+#### AWS EKS - Kubernetes Web App/Server allows for the deployment of a calculator web application or NGINX web server. The calculator web app built using flask is deployed using a private Docker image. On the other hand, the NGINX web server uses a public NGINX image. Both deployments are hosted on a AWS Kubernetes cluster that users access through a load balancer. AWS EKS - Kubernetes Web App/Server simplifies container management while allowing users to access containerized apps, servers, and services while maintaining high availability. 
 
 ![EKSLogo](https://github.com/ericincloud/AWS-EKS-Web-App-or-Server/assets/144301872/bb8c3fba-27e7-43cb-bbf8-a35cbcb90e08)
 ![image](https://github.com/ericincloud/AWS-EKS-Web-App-or-Server/assets/144301872/db06b716-88a4-4467-a207-5b81647f3bfc)
@@ -174,7 +174,7 @@ spec:
 `eksctl delete cluster --name my-eks-cluster`
 
 ## Notes
-* Ensure architecture (arm64,amd64) match between the app/server/service and instance to prevent any exec errors.
+* Ensure architecture (arm64 or amd64) match between the app/server/service and instance to prevent any exec errors.
 * Use appropriate compute type for application/server.
 * Ensure necessary app dependencies.
 * Enter `sudo sh eksctl.sh` for related eksctl usage errors.
